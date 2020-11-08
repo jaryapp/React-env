@@ -1,10 +1,28 @@
-const path = require("path");
+require("dotenv").config();
 
+const path = require("path");
 const appIndex = path.resolve(__dirname, "src", "index.tsx");
+
+function getClientEnv(nodeEnv) {
+  return {
+    "process.env": JSON.stringify(
+      Object.keys(process.env)
+        .filter((key) => /^REACT_APP/i.test(key))
+        .reduce(
+          (env, key) => {
+            env[key] = process.env[key];
+            return env;
+          },
+          { NODE_ENV: nodeEnv }
+        )
+    ),
+  };
+}
 
 module.exports = (webpackEnv) => {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
+  const clientEnv = getClientEnv(webpackEnv);
   return {
     mode: webpackEnv,
     entry: appIndex,
@@ -62,5 +80,12 @@ module.exports = (webpackEnv) => {
         },
       ],
     },
+    resolve: {
+      extensions: [".tsx", ".ts", ".js"],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({ template: appHtml }),
+      new webpack.DefinePlugin(clientEnv),
+    ],
   };
 };
