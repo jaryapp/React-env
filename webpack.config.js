@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const path = require("path");
 const appIndex = path.resolve(__dirname, "src", "index.tsx");
+const ManifestPlugin = require("webpack-manifest-plugin");
 
 function getClientEnv(nodeEnv) {
   return {
@@ -86,6 +87,18 @@ module.exports = (webpackEnv) => {
     plugins: [
       new HtmlWebpackPlugin({ template: appHtml }),
       new webpack.DefinePlugin(clientEnv),
+      new ManifestPlugin({
+        generate: (seed, files, entrypoints) => {
+          const manifestFiles = files.reduce(
+            (manifest, { name, path }) => ({ ...manifest, [name]: path }),
+            seed
+          );
+          const entryFiles = entrypoints.main.filter(
+            (filename) => !/\.map/.test(filename)
+          );
+          return { files: manifestFiles, entrypoints: entryFiles };
+        },
+      }),
     ],
   };
 };
