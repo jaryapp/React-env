@@ -47,6 +47,19 @@ module.exports = (webpackEnv) => {
             name: "[name].[hash:8].[ext]",
           },
         },
+        {
+          test: /\.(ts|tsx)$/,
+          enforce: "pre",
+          exclude: /node_modules/,
+          loader: "eslint-loader",
+          options: {
+            cache: true,
+            formatter: isEnvDevelopment
+              ? "codeframe"
+              : isEnvProduction && "stylish",
+          },
+          include: appSrc,
+        },
       ],
     },
   };
