@@ -1,10 +1,17 @@
 require("dotenv").config();
 
-const path = require("path");
-const appIndex = path.resolve(__dirname, "src", "index.tsx");
-const ManifestPlugin = require("webpack-manifest-plugin");
-const appPublic = path.resolve(__dirname, "public");
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
+
+const webpack = require("webpack");
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ManifestPlugin = require("webpack-manifest-plugin");
+
+const appBuild = path.resolve(__dirname, "build");
+const appSrc = path.resolve(__dirname, "src");
+const appIndex = path.resolve(__dirname, "src", "index.tsx");
+const appPublic = path.resolve(__dirname, "public");
+const appHtml = path.resolve(__dirname, "public", "index.html");
 
 function getClientEnv(nodeEnv) {
   return {
