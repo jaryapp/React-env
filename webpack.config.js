@@ -20,6 +20,7 @@ module.exports = (webpackEnv) => {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
           use: [
+            "cache-loader",
             {
               loader: "ts-loader",
               options: {
@@ -27,6 +28,24 @@ module.exports = (webpackEnv) => {
               },
             },
           ],
+        },
+        {
+          loader: "file-loader",
+          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+          options: {
+            outputPath: "static/media",
+            name: "[name].[hash:8].[ext]",
+            esModule: false,
+          },
+        },
+        {
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          loader: "url-loader",
+          options: {
+            limit: 10000,
+            outputPath: "static/media",
+            name: "[name].[hash:8].[ext]",
+          },
         },
       ],
     },
