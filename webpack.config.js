@@ -3,6 +3,8 @@ require("dotenv").config();
 const path = require("path");
 const appIndex = path.resolve(__dirname, "src", "index.tsx");
 const ManifestPlugin = require("webpack-manifest-plugin");
+const appPublic = path.resolve(__dirname, "public");
+const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
 
 function getClientEnv(nodeEnv) {
   return {
@@ -33,6 +35,19 @@ module.exports = (webpackEnv) => {
         ? "static/js/[name].[contenthash:8].js"
         : isEnvDevelopment && "static/js/bundle.js",
     },
+    devServer: {
+      port: 3000,
+      contentBase: appPublic,
+      open: true,
+      historyApiFallback: true,
+      overlay: true,
+      stats: "errors-warnings",
+    },
+    devtool: isEnvProduction
+      ? shouldUseSourceMap
+        ? "source-map"
+        : false
+      : isEnvDevelopment && "cheap-module-source-map",
     module: {
       rules: [
         {
